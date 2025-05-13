@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="application/ecmascript">
+        window.onload = () => { // callback
+            console.log('loaded');
+            let counter = 0;
+            const spanCounter = document.querySelector("#counter");
+            const countDownButton = document.querySelector("#countDown");
+            const countUpButton = document.querySelector("#countUp");
+            countDownButton.addEventListener("click", () => {
+                counter--;
+                spanCounter.innerText = counter;
+            })
+            let event = new CustomEvent("countUp", {
+                counter
+            });
+            setInterval(() => {
+                countDownButton.dispatchEvent(event);
+            }, 3_000);
+            countUpButton.addEventListener("countUp", () => {
+                console.log("countUp event is emitted and handled!");
+            })
+            let timer = setInterval( () => {
+                counter++;
+                spanCounter.innerText = counter;
+            }, 1_000);
+            setTimeout(()=>clearInterval(timer), 10_000)
+
+        }
+    </script>
+</head>
+<body>
+<h1><span id="counter">0</span></h1>
+<button id="countDown">Count Down</button>
+<button id="countUp">Count Up</button>
+</body>
+</html>

@@ -5,5 +5,8 @@
   "main": "index.js",
   "scripts": {
     "async-exercise03": "node async-programming/exercise03.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.2"
   }
 }
