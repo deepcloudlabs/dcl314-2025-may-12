@@ -1,0 +1,9 @@
+{
+  "name": "study",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "async-exercise03": "node async-programming/exercise03.js"
+  }
+}

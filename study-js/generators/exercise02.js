@@ -8,7 +8,11 @@ function* gun(numbers){
     }
     console.log("gun() returns.")
 }
-
+let counter = 0;
 for (let even_number of gun([1,2,3,4,5,6,7,8,9,10])) {
     console.log(`[for] ${even_number}`);
+    counter++;
+    if (counter === 3) {
+        break;
+    }
 }
