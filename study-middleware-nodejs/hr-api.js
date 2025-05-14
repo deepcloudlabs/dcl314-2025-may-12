@@ -28,7 +28,7 @@ function createApi(callback) {
 //region Query
 
 // GET http://localhost:9100/hr/api/v1/employees/11111111110
-    api.get('/hr/hr/api/v1/employees/:identity', (req, res) => {
+    api.get('/hr/api/v1/employees/:identity', (req, res) => {
         const identity = req.params.identity;
         getEmployeeByIdentity(identity).then(employee => {
             res.set("Content-Type", "application/json");
