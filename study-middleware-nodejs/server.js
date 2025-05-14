@@ -1,9 +1,12 @@
 const {connect_to_mongodb} = require("./mongo-repository-base");
 const {getEmployeesByPage} = require("./mongo-repository");
+const {createApi} = require("./hr-api");
 
 const application = () => {
-  console.log("Application started");
-    getEmployeesByPage(0,10).then(console.log);
+  console.log("Connected to mongodb!");
+  createApi(()=>{
+     console.log("Application is just started!");
+  });
 };
 
 connect_to_mongodb().then(application);
