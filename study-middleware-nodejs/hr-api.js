@@ -14,8 +14,11 @@ const contract = require("./swagger-hr-api.json");
 const api = express();
 
 function createApi(callback) {
+    //region initialize API
     api.use(bodyParser.json({limit: '5mb'}));
     api.use(logger(process.env.PROFILE));
+    //endregion
+
     //region CORS FILTER
     api.use(function (req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
@@ -23,11 +26,14 @@ function createApi(callback) {
         res.header("Access-Control-Allow-Headers", "Origin,Content-Type,Accept");
         next();
     });
-//endregion
+    //endregion
+
+    //region Swagger Documentation
     const contract = require("./swagger-hr-api.json");
     // http://localhost:9100/api-docs
     api.use('/api-docs', swaggerUi.serve, swaggerUi.setup(contract));
     let port = process.env.SERVER_PORT || 9100;
+    //endregion
 
     // REST API = Command Query Segregation
 // Command = Create, Update, Delete
@@ -65,8 +71,17 @@ function createApi(callback) {
 
     api.post('/hr/api/v1/employees', (req, res) => {
         const employee = req.body;
-        console.log(employee);
+
         createEmployee(employee).then(insertedEmployee => {
+            const event = {
+                eventType: "EMPLOYEE_HIRED_EVENT",
+                timestamp: new Date(),
+                employeeId: employee.identity,
+                employeeEmail: employee.email
+            };
+            sessions.forEach(session => {
+               io.emit('hr-events', event);
+            });
             res.set("Content-Type", "application/json");
             res.status(200).send(insertedEmployee);
         }).catch(err => {
@@ -110,8 +125,20 @@ function createApi(callback) {
         )
     });
 //endregion
-
+    let sessions = [];
     const server = api.listen(port, callback);
+    const io = require('socket.io')(server,{
+        "cors": "*",
+        "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
+    });
+    io.on('connection', (session) => {
+        console.log(`New session is created: ${session.id}.`);
+        sessions.push(session);
+        session.on('disconnect', () => {
+            sessions = sessions.filter(s => s.id !== session.id);
+            console.log(`A session is closed: ${session.id}.`);
+        });
+    });
 }
 
 function getApi() {
