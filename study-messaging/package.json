@@ -1,0 +1,20 @@
+{
+  "name": "study-messaging",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ws-server.js",
+  "scripts": {
+    "ws-server": "node --env-file=.env ws-server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.2",
+    "amqplib": "^0.10.8",
+    "node-rdkafka": "^3.4.0",
+    "mongoose": "^8.14.3",
+    "socket.io": "^2.3.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
