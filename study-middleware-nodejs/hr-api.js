@@ -94,7 +94,14 @@ function createApi(callback) {
     api.put('/hr/api/v1/employees/:identity', (req, res) => {
         const employee = req.body;
         updateEmployee(employee).then(updatedEmployee => {
-            res.set("Content-Type", "application/json");
+            const event = {
+                eventType: "EMPLOYEE_UPDATED_EVENT",
+                timestamp: new Date(),
+                employeeId: employee.identity
+            };
+            sessions.forEach(session => {
+                io.emit('hr-events', event);
+            });            res.set("Content-Type", "application/json");
             res.status(200).send(updatedEmployee);
         }).catch(err => {
                 res.status(400).send(err);
@@ -106,6 +113,14 @@ function createApi(callback) {
     api.patch('/hr/api/v1/employees/:identity', (req, res) => {
         const employee = req.body;
         updateEmployee(employee).then(updatedEmployee => {
+            const event = {
+                eventType: "EMPLOYEE_UPDATED_EVENT",
+                timestamp: new Date(),
+                employeeId: employee.identity
+            };
+            sessions.forEach(session => {
+                io.emit('hr-events', event);
+            });
             res.set("Content-Type", "application/json");
             res.status(200).send(updatedEmployee);
         }).catch(err => {
@@ -117,6 +132,14 @@ function createApi(callback) {
     api.delete('/hr/api/v1/employees/:identity', (req, res) => {
         const identity = req.params.identity;
         removeEmployee(identity).then(removedEmployee => {
+            const event = {
+                eventType: "EMPLOYEE_FIRED_EVENT",
+                timestamp: new Date(),
+                employee: removedEmployee
+            };
+            sessions.forEach(session => {
+                io.emit('hr-events', event);
+            });
             res.set("Content-Type", "application/json");
             res.status(200).send(removedEmployee);
         }).catch(err => {
