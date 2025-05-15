@@ -73,15 +73,17 @@ function createApi(callback) {
         const employee = req.body;
 
         createEmployee(employee).then(insertedEmployee => {
-            const event = {
-                eventType: "EMPLOYEE_HIRED_EVENT",
-                timestamp: new Date(),
-                employeeId: employee.identity,
-                employeeEmail: employee.email
-            };
-            sessions.forEach(session => {
-               io.emit('hr-events', event);
-            });
+            process.nextTick(() => {
+                const event = {
+                    eventType: "EMPLOYEE_HIRED_EVENT",
+                    timestamp: new Date(),
+                    employeeId: employee.identity,
+                    employeeEmail: employee.email
+                };
+                sessions.forEach(session => {
+                    io.emit('hr-events', event);
+                });
+            })
             res.set("Content-Type", "application/json");
             res.status(200).send(insertedEmployee);
         }).catch(err => {
@@ -94,14 +96,17 @@ function createApi(callback) {
     api.put('/hr/api/v1/employees/:identity', (req, res) => {
         const employee = req.body;
         updateEmployee(employee).then(updatedEmployee => {
-            const event = {
-                eventType: "EMPLOYEE_UPDATED_EVENT",
-                timestamp: new Date(),
-                employeeId: employee.identity
-            };
-            sessions.forEach(session => {
-                io.emit('hr-events', event);
-            });            res.set("Content-Type", "application/json");
+            process.nextTick(() => {
+                const event = {
+                    eventType: "EMPLOYEE_UPDATED_EVENT",
+                    timestamp: new Date(),
+                    employeeId: employee.identity
+                };
+                sessions.forEach(session => {
+                    io.emit('hr-events', event);
+                });
+            });
+            res.set("Content-Type", "application/json");
             res.status(200).send(updatedEmployee);
         }).catch(err => {
                 res.status(400).send(err);
@@ -113,13 +118,15 @@ function createApi(callback) {
     api.patch('/hr/api/v1/employees/:identity', (req, res) => {
         const employee = req.body;
         updateEmployee(employee).then(updatedEmployee => {
-            const event = {
-                eventType: "EMPLOYEE_UPDATED_EVENT",
-                timestamp: new Date(),
-                employeeId: employee.identity
-            };
-            sessions.forEach(session => {
-                io.emit('hr-events', event);
+            process.nextTick(() => {
+                const event = {
+                    eventType: "EMPLOYEE_UPDATED_EVENT",
+                    timestamp: new Date(),
+                    employeeId: employee.identity
+                };
+                sessions.forEach(session => {
+                    io.emit('hr-events', event);
+                });
             });
             res.set("Content-Type", "application/json");
             res.status(200).send(updatedEmployee);
@@ -150,7 +157,7 @@ function createApi(callback) {
 //endregion
     let sessions = [];
     const server = api.listen(port, callback);
-    const io = require('socket.io')(server,{
+    const io = require('socket.io')(server, {
         "cors": "*",
         "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
     });
